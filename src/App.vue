@@ -1,32 +1,61 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+<template >
+  <div>
+    <div class="container mt-4 align-items-center">
+      <input
+        type="text"
+        class="form-control w-50 d-inline mb-3 rounded-pill"
+        v-model="name"
+      />
+      <input
+        type="submit"
+        class="btn btn-primary mb-2 mx-3 w-25 rounded-pill"
+        @click="addNew"
+        value="ADD"
+      />
+
+      <ul class="list-group">
+        <li class="list-group-item bg-dark text-white" v-for="user in users" :key="user.id">
+          {{ user.name }}
+          <span class="float-right" @click="removeNames"> <i class="far fa-trash-alt"></i> </span>
+        </li>
+      </ul>
     </div>
-    <router-view />
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+/* eslint-disable */
 
-#nav {
-  padding: 30px;
-}
+import axios from "axios";
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+export default {
+  data() {
+    return {
+      users: [],
+      addedName: null
+    };
+  },
+  async created() {
+    let fetchUsers = await axios.get(
+      "https://jsonplaceholder.typicode.com/users"
+    );
+    this.users = fetchUsers.data;
+  },
+  methods: {
+    addNew() {
+      if (this.addedName === "") {
+        alert("Enter A valid Name");
+      } else {
+        let i_d = this.users.length + 1;
+        let user = ({ id: i_d, name: this.name });
+        this.users.unshift(user);
+        this.name = "";
+      }
+    },
+    removeNames(name) {
+      let currentName = this.users.indexOf(name);
+      this.users.splice(this.currentName, 1);
+    }
+  }
+};
+</script>
